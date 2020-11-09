@@ -1,9 +1,10 @@
 Source: libdrm
 Priority: optional
 Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
-Uploaders: Andreas Boll <andreas.boll.dev@gmail.com>
+Uploaders: Andreas Boll <aboll@debian.org>
 Build-Depends:
- debhelper (>= 10),
+ debhelper (>= 11),
+ meson,
  quilt,
  xsltproc,
  docbook-xsl,
@@ -13,11 +14,10 @@ Build-Depends:
  libudev-dev [linux-any],
  libpciaccess-dev,
  valgrind [amd64 armhf i386 mips mipsel powerpc s390x],
- libbsd-dev [kfreebsd-any],
-Standards-Version: 4.1.3
+Standards-Version: 4.1.4
 Section: libs
-Vcs-Git: https://anonscm.debian.org/git/pkg-xorg/lib/libdrm.git
-Vcs-Browser: https://anonscm.debian.org/cgit/pkg-xorg/lib/libdrm.git
+Vcs-Git: https://salsa.debian.org/xorg-team/lib/libdrm
+Vcs-Browser: https://salsa.debian.org/xorg-team/lib/libdrm
 Homepage: https://cgit.freedesktop.org/mesa/drm/
 
 Package: libdrm-dev
@@ -33,7 +33,7 @@ Depends:
  libdrm-freedreno1 (= ${binary:Version}) [any-arm arm64],
  libdrm-exynos1 (= ${binary:Version}) [any-arm],
  libdrm-tegra0 (= ${binary:Version}) [any-arm arm64],
- libdrm-etnaviv1 (= ${binary:Version}) [armhf],
+ libdrm-etnaviv1 (= ${binary:Version}) [armhf arm64],
  ${misc:Depends},
 Multi-Arch: same
 Description: Userspace interface to kernel DRM services -- development files
@@ -199,7 +199,7 @@ Description: Userspace interface to amdgpu-specific kernel DRM services -- runti
  OpenGL drivers.
 
 Package: libdrm-etnaviv1
-Architecture: armhf
+Architecture: armhf arm64
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},

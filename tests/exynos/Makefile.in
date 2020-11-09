@@ -349,6 +349,7 @@ pkgconfigdir = @pkgconfigdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -360,6 +361,7 @@ top_srcdir = @top_srcdir@
 AM_CFLAGS = \
 	-pthread \
 	$(WARN_CFLAGS)\
+	-fvisibility=hidden \
 	-I $(top_srcdir)/include/drm \
 	-I $(top_srcdir)/libkms/ \
 	-I $(top_srcdir)/exynos \

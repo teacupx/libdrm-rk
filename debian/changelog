@@ -1,3 +1,59 @@
+libdrm (2.4.97-1) unstable; urgency=medium
+
+  [ Andreas Boll ]
+  * New upstream release.
+  * Update libdrm-amdgpu1.symbols and shlibs.
+  * Update libdrm-freedreno1.symbols and shlibs.
+
+  [ James Clarke ]
+  * Fix build on GNU/kFreeBSD (Closes: #837034, #909249).
+  * Remove no longer needed build-dep libbsd-overlay.
+
+ -- Andreas Boll <aboll@debian.org>  Wed, 23 Jan 2019 12:45:04 +0100
+
+libdrm (2.4.95-1) unstable; urgency=medium
+
+  [ Timo Aaltonen ]
+  * rules, control: Switch to meson.
+
+  [ Andreas Boll ]
+  * New upstream release.
+    - Fixes WebGL on Firefox (Closes: #907698).
+  * Update libdrm-amdgpu1.symbols and shlibs.
+  * Drop static libdrm library from libdrm-dev.
+  * Update extend-diff-ignore.
+
+ -- Andreas Boll <aboll@debian.org>  Wed, 10 Oct 2018 11:50:36 +0200
+
+libdrm (2.4.94-1) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * Enable etnaviv on arm64 (Closes: #906915)
+
+  [ Timo Aaltonen ]
+  * New upstream release. (LP: #1789924)
+  * Update libdrm-amdgpu1.symbols and shlibs.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 30 Aug 2018 21:18:04 +0300
+
+libdrm (2.4.93-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Update libdrm-freedreno1.symbols and shlibs.
+
+ -- Andreas Boll <aboll@debian.org>  Mon, 13 Aug 2018 20:20:28 +0200
+
+libdrm (2.4.92-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Update libdrm-freedreno1.symbols and shlibs.
+  * control: Update to my Debian address.
+  * Update Vcs-* URLs to point at salsa.debian.org.
+  * Bump debhelper compat to 11.
+  * Bump standards version to 4.1.4.
+
+ -- Andreas Boll <aboll@debian.org>  Fri, 18 May 2018 14:32:46 +0200
+
 libdrm (2.4.91-2) unstable; urgency=medium
 
   * Update libdrm-freedreno1.symbols and shlibs (Closes: #892960).
