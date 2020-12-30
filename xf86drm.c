@@ -59,8 +59,6 @@
 #endif
 #include <math.h>
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
-
 /* Not all systems have MAP_FAILED defined */
 #ifndef MAP_FAILED
 #define MAP_FAILED ((void *)-1)
@@ -101,7 +99,7 @@
 #define DRM_MAJOR 226 /* Linux */
 #endif
 
-#if defined(__OpenBSD__) || defined(__DragonFly__)
+#ifdef __OpenBSD__
 struct drm_pciinfo {
 	uint16_t	domain;
 	uint8_t		bus;
@@ -2769,20 +2767,6 @@ drm_public char *drmGetDeviceNameFromFd(int fd)
     return strdup(name);
 }
 
-static bool drmNodeIsDRM(int maj, int min)
-{
-#ifdef __linux__
-    char path[64];
-    struct stat sbuf;
-
-    snprintf(path, sizeof(path), "/sys/dev/char/%d:%d/device/drm",
-             maj, min);
-    return stat(path, &sbuf) == 0;
-#else
-    return maj == DRM_MAJOR;
-#endif
-}
-
 drm_public int drmGetNodeTypeFromFd(int fd)
 {
     struct stat sbuf;
@@ -2794,7 +2778,7 @@ drm_public int drmGetNodeTypeFromFd(int fd)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode)) {
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode)) {
         errno = EINVAL;
         return -1;
     }
@@ -2860,7 +2844,7 @@ static char *drmGetMinorNameForFD(int fd, int type)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return NULL;
 
     snprintf(buf, sizeof(buf), "/sys/dev/char/%d:%d/device/drm", maj, min);
@@ -2894,7 +2878,7 @@ static char *drmGetMinorNameForFD(int fd, int type)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return NULL;
 
     switch (type) {
@@ -2986,17 +2970,6 @@ static int drmParseSubsystemType(int maj, int min)
     char path[PATH_MAX + 1];
     char link[PATH_MAX + 1] = "";
     char *name;
-    struct {
-        const char *name;
-        int bus_type;
-    } bus_types[] = {
-        { "/pci", DRM_BUS_PCI },
-        { "/usb", DRM_BUS_USB },
-        { "/platform", DRM_BUS_PLATFORM },
-        { "/spi", DRM_BUS_PLATFORM },
-        { "/host1x", DRM_BUS_HOST1X },
-        { "/virtio", DRM_BUS_VIRTIO },
-    };
 
     snprintf(path, PATH_MAX, "/sys/dev/char/%d:%d/device/subsystem",
              maj, min);
@@ -3008,13 +2981,23 @@ static int drmParseSubsystemType(int maj, int min)
     if (!name)
         return -EINVAL;
 
-    for (unsigned i = 0; i < ARRAY_SIZE(bus_types); i++) {
-        if (strncmp(name, bus_types[i].name, strlen(bus_types[i].name)) == 0)
-            return bus_types[i].bus_type;
-    }
+    if (strncmp(name, "/pci", 4) == 0)
+        return DRM_BUS_PCI;
+
+    if (strncmp(name, "/usb", 4) == 0)
+        return DRM_BUS_USB;
+
+    if (strncmp(name, "/platform", 9) == 0)
+        return DRM_BUS_PLATFORM;
+
+    if (strncmp(name, "/host1x", 7) == 0)
+        return DRM_BUS_HOST1X;
+
+    if (strncmp(name, "/virtio", 7) == 0)
+        return DRM_BUS_VIRTIO;
 
     return -EINVAL;
-#elif defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__OpenBSD__)
     return DRM_BUS_PCI;
 #else
 #warning "Missing implementation of drmParseSubsystemType"
@@ -3063,7 +3046,7 @@ static int drmParsePciBusInfo(int maj, int min, drmPciBusInfoPtr info)
     info->func = func;
 
     return 0;
-#elif defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__OpenBSD__)
     struct drm_pciinfo pinfo;
     int fd, type;
 
@@ -3152,6 +3135,7 @@ static int parse_separate_sysfs_files(int maj, int min,
                                       drmPciDeviceInfoPtr device,
                                       bool ignore_revision)
 {
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
     static const char *attrs[] = {
       "revision", /* Older kernels are missing the file, so check for it first */
       "vendor",
@@ -3229,7 +3213,7 @@ static int drmParsePciDeviceInfo(int maj, int min,
         return parse_config_sysfs_file(maj, min, device);
 
     return 0;
-#elif defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__OpenBSD__)
     struct drm_pciinfo pinfo;
     int fd, type;
 
@@ -3745,7 +3729,7 @@ process_device(drmDevicePtr *device, const char *d_name,
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return -1;
 
     subsystem_type = drmParseSubsystemType(maj, min);
@@ -3859,7 +3843,7 @@ drm_public int drmGetDevice2(int fd, uint32_t flags, drmDevicePtr *device)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return -EINVAL;
 
     node_type = drmGetMinorType(min);
@@ -3925,7 +3909,7 @@ drm_public int drmGetDevice2(int fd, uint32_t flags, drmDevicePtr *device)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return -EINVAL;
 
     subsystem_type = drmParseSubsystemType(maj, min);
@@ -4086,7 +4070,7 @@ drm_public char *drmGetDeviceNameFromFd2(int fd)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return NULL;
 
     snprintf(path, sizeof(path), "/sys/dev/char/%d:%d", maj, min);
@@ -4112,7 +4096,7 @@ drm_public char *drmGetDeviceNameFromFd2(int fd)
     maj = major(sbuf.st_rdev);
     min = minor(sbuf.st_rdev);
 
-    if (!drmNodeIsDRM(maj, min) || !S_ISCHR(sbuf.st_mode))
+    if (maj != DRM_MAJOR || !S_ISCHR(sbuf.st_mode))
         return NULL;
 
     node_type = drmGetMinorType(min);

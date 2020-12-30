@@ -1,15 +1,8 @@
-libdrm (2.4.97-1) unstable; urgency=medium
+libdrm (2.4.95-1~bpo9+1) stretch-backports; urgency=medium
 
-  [ Andreas Boll ]
-  * New upstream release.
-  * Update libdrm-amdgpu1.symbols and shlibs.
-  * Update libdrm-freedreno1.symbols and shlibs.
+  * Rebuild for stretch-backports.
 
-  [ James Clarke ]
-  * Fix build on GNU/kFreeBSD (Closes: #837034, #909249).
-  * Remove no longer needed build-dep libbsd-overlay.
-
- -- Andreas Boll <aboll@debian.org>  Wed, 23 Jan 2019 12:45:04 +0100
+ -- Andreas Boll <aboll@debian.org>  Mon, 22 Oct 2018 15:13:14 +0200
 
 libdrm (2.4.95-1) unstable; urgency=medium
 
@@ -54,6 +47,12 @@ libdrm (2.4.92-1) unstable; urgency=medium
 
  -- Andreas Boll <aboll@debian.org>  Fri, 18 May 2018 14:32:46 +0200
 
+libdrm (2.4.91-2~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+
+ -- Andreas Boll <aboll@debian.org>  Sun, 29 Apr 2018 10:30:08 +0200
+
 libdrm (2.4.91-2) unstable; urgency=medium
 
   * Update libdrm-freedreno1.symbols and shlibs (Closes: #892960).
@@ -74,6 +73,12 @@ libdrm (2.4.90-1) unstable; urgency=medium
   * Update extend-diff-ignore.
 
  -- Andreas Boll <andreas.boll.dev@gmail.com>  Tue, 20 Feb 2018 10:43:56 +0100
+
+libdrm (2.4.89-1~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+
+ -- Andreas Boll <andreas.boll.dev@gmail.com>  Thu, 01 Feb 2018 09:56:39 +0100
 
 libdrm (2.4.89-1) unstable; urgency=medium
 
